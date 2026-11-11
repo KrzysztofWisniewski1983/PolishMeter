@@ -1,0 +1,62 @@
+{
+    "459121": {
+        "name": "Bezrobocie",
+        "unit": "osoby",
+        "category": "Rynek pracy",
+        "description": "Liczba osób bezrobotnych w Polsce",
+        "save_as": "Liczba_osob_bezrobotnych_w_Polsce",
+        "xlabel": "Rok",
+        "ylabel": "Liczba osób",
+        "years": [],
+        "values": [],
+        "chart": true
+    },
+    "60270": {
+        "name": "Stopa bezrobocia",
+        "unit": "%",
+        "category": "Rynek pracy",
+        "description": "Stopa bezrobocia rejestrowanego w Polsce",
+        "save_as": "Stopa_bezrobocia_rejestrowanego_w_Polsce",
+        "xlabel": "Rok",
+        "ylabel": "Udział (%)",
+        "years": [],
+        "values": [],
+        "chart": true
+    },
+    "99719": {
+        "name": "Meldunek czasowy",
+        "unit": "osoby",
+        "category": "Ludnosc",
+        "description": "Meldunek na pobyt czasowy w Polsce",
+        "save_as": "Meldunek_na_pobyt_czasowy_w_Polsce",
+        "xlabel": "Rok",
+        "ylabel": "Liczba osób",
+        "years": [],
+        "values": [],
+        "chart": true
+    },
+    "60632": {
+        "name": "Aktywni zawodowo ogółem",
+        "unit": "osoby",
+        "category": "Rynek pracy",
+        "description": "Aktywni zawodowo ogółem w Polsce",
+        "save_as": "Aktywni_zawodowo_ogolem_w_Polsce",
+        "xlabel": "Rok",
+        "ylabel": "Liczba osób",
+        "years": [],
+        "values": [],
+        "chart": true
+    },
+    "6": {
+        "name": "Ludność ogółem",
+        "unit": "dane w tys.",
+        "category": "Ludnosc",
+        "description": "Ludność ogółem w Polsce",
+        "save_as": "Ludnosc_ogolem_w_Polsce",
+        "xlabel": "Rok",
+        "ylabel": "Liczba osób",
+        "years": [],
+        "values": [],
+        "chart": true
+    }
+}
