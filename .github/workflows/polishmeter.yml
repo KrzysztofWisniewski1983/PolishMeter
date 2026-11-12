@@ -1,0 +1,50 @@
+name: PolishMeter QA Pipeline
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  # STAGE 1 (logical): Setup
+  setup:
+    name: Setup Environment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.15"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+  # STAGE 2 (logical): Unit Tests
+  unit-tests:
+    name: Run Unit Tests
+    needs: setup
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.15"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Execute Unit Tests
+        run: python -m pytest tests/unit -v
