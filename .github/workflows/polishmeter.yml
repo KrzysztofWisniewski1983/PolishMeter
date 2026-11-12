@@ -48,3 +48,24 @@ jobs:
 
       - name: Execute Unit Tests
         run: python -m pytest tests/unit -v
+
+  # STAGE 3 (logical): PolishMeter Smoke Tests
+  polishmeter-smoke-tests:
+    name: Run PolishMeter Smoke Tests
+    needs: unit-tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.15"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Execute PolishMeter Smoke Tests
+        run: python -m pytest tests/smoke/test_polishmeter_smoke.py -v
