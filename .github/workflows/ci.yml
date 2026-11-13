@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - develop
+      - 'feature/**'
   pull_request:
     branches:
       - develop
@@ -54,6 +55,7 @@ jobs:
     name: Run PolishMeter Smoke Tests
     needs: unit-tests
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Checkout repository
@@ -66,6 +68,9 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Install Playwright browsers
+        run: python -m playwright install --with-deps chromium
 
       - name: Execute PolishMeter Smoke Tests
         run: python -m pytest tests/smoke/test_polishmeter_smoke.py -v
