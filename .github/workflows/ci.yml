@@ -81,7 +81,7 @@ jobs:
         run: python -m playwright install --with-deps chromium
 
       - name: Execute PolishMeter Smoke Tests
-        run: python -m pytest tests/smoke/test_polishmeter_web_smoke.py -v --screenshot only-on-failure --tracing retain-on-failures
+        run: python -m pytest tests/smoke/test_polishmeter_web_smoke.py -v --screenshot only-on-failure --tracing retain-on-failure
 
       - name: Upload Playwright Screenshots
         if: always()
