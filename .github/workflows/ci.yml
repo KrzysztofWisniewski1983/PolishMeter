@@ -48,7 +48,15 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Execute Unit Tests
-        run: python -m pytest tests/unit -v
+        run: python -m pytest tests/unit -v --html=report.html --self-contained-html
+
+      - name: Upload Pytest HTML Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-unit-report
+          path: report.html
+          retention-days: 7
 
   # STAGE 3 (logical): PolishMeter Smoke Tests
   polishmeter-smoke-tests:

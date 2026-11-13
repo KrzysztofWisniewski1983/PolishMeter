@@ -33,6 +33,8 @@ pyee==14.0.0
 Pygments==2.21.0
 pyparsing==3.3.3
 pytest==9.1.1
+pytest-html==4.2.0
+pytest-metadata==3.1.1
 pytest-order==1.5.0
 pytest-playwright==0.10.0
 python-dateutil==3.0.0
