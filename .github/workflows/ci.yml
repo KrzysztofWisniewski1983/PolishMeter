@@ -1,0 +1,111 @@
+name: PolishMeter QA Pipeline
+
+on:
+  push:
+    branches:
+      - develop
+      - 'feature/**'
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  # STAGE 1 (logical): Setup
+  setup:
+    name: Setup Environment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.15"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+  # STAGE 2 (logical): Unit Tests
+  unit-tests:
+    name: Run Unit Tests
+    needs: setup
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.15"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Execute Unit Tests
+        run: python -m pytest tests/unit -v --html=report.html --self-contained-html --alluredir=allure-results
+
+      - name: Upload Pytest HTML Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-unit-report
+          path: report.html
+          retention-days: 7
+
+      - name: Upload Allure Unit Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-unit
+          path: allure-results/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  # STAGE 3 (logical): PolishMeter Smoke Tests
+  polishmeter-web-smoke-tests:
+    name: Run PolishMeter Web Smoke Tests
+    needs: unit-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.15"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install Playwright browsers
+        run: python -m playwright install --with-deps chromium
+
+      - name: Execute PolishMeter Smoke Tests
+        run: python -m pytest tests/smoke/test_polishmeter_web_smoke.py -v --screenshot only-on-failure --tracing retain-on-failure --alluredir=allure-results
+
+      - name: Upload Playwright Screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-screenshots
+          path: test-results/
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload Allure Web Smoke Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-web
+          path: allure-results/
+          retention-days: 7
+          if-no-files-found: ignore

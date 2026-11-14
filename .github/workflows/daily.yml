@@ -1,0 +1,50 @@
+name: PolishMeter Daily Smoke Test
+
+on:
+  schedule:
+    - cron: '30 5 * * *'
+
+  workflow_dispatch:
+
+jobs:
+  daily-smoke-test:
+    name: Daily Main Page Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.15"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install Playwright browser
+        run: python -m playwright install --with-deps chromium
+
+      - name: Execute Main Page Smoke Test
+        run: python -m pytest tests/smoke/test_polishmeter_web_smoke.py::test_open_mainpage_polishmeter -v
+
+      - name: Send Email Notification
+        if: always()
+        uses: dawidd6/action-send-mail@v23
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.GMAIL_USERNAME }}
+          password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          subject: PolishMeter Daily Test - ${{ job.status }}
+          to: ${{ secrets.GMAIL_USERNAME }}
+          from: ${{ secrets.GMAIL_USERNAME }}
+          body: |
+            PolishMeter daily smoke test has finished.
+
+            Status: ${{ job.status }}
+
+            GitHub Actions run:
+            ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
