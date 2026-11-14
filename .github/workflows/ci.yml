@@ -48,7 +48,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Execute Unit Tests
-        run: python -m pytest tests/unit -v --html=report.html --self-contained-html
+        run: python -m pytest tests/unit -v --html=report.html --self-contained-html --alluredir=allure-results
 
       - name: Upload Pytest HTML Report
         if: always()
@@ -57,6 +57,15 @@ jobs:
           name: pytest-unit-report
           path: report.html
           retention-days: 7
+
+      - name: Upload Allure Unit Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-unit
+          path: allure-results/
+          retention-days: 7
+          if-no-files-found: ignore
 
   # STAGE 3 (logical): PolishMeter Smoke Tests
   polishmeter-web-smoke-tests:
@@ -81,7 +90,7 @@ jobs:
         run: python -m playwright install --with-deps chromium
 
       - name: Execute PolishMeter Smoke Tests
-        run: python -m pytest tests/smoke/test_polishmeter_web_smoke.py -v --screenshot only-on-failure --tracing retain-on-failure
+        run: python -m pytest tests/smoke/test_polishmeter_web_smoke.py -v --screenshot only-on-failure --tracing retain-on-failure --alluredir=allure-results
 
       - name: Upload Playwright Screenshots
         if: always()
@@ -89,5 +98,14 @@ jobs:
         with:
           name: playwright-screenshots
           path: test-results/
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload Allure Web Smoke Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-web
+          path: allure-results/
           retention-days: 7
           if-no-files-found: ignore

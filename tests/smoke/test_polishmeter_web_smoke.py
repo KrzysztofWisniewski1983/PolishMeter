@@ -14,7 +14,7 @@ def test_open_subpage_polishmeter_about(page):
     assert page.get_by_role("heading", name="About").is_visible()
 
 def test_open_subpage_polishmeter_contact(page):
-    page.goto(f"{settings.web_page}{settings.subpage_contactt}")
+    page.goto(f"{settings.web_page}{settings.subpage_contact}")
     assert page.get_by_role("heading", name="Contact").is_visible()
 
 def test_navigate_to_subpage_about(page):
