@@ -1,5 +1,7 @@
 {
     "459121": {
+        "key": "P1",
+        "key_chart": "P1_chart",
         "name": "Bezrobocie",
         "unit": "osoby",
         "category": "Rynek pracy",
@@ -12,6 +14,8 @@
         "chart": true
     },
     "60270": {
+        "key": "P2",
+        "key_chart": "P2_chart",
         "name": "Stopa bezrobocia",
         "unit": "%",
         "category": "Rynek pracy",
@@ -23,19 +27,9 @@
         "values": [],
         "chart": true
     },
-    "99719": {
-        "name": "Meldunek czasowy",
-        "unit": "osoby",
-        "category": "Ludnosc",
-        "description": "Meldunek na pobyt czasowy w Polsce",
-        "save_as": "Meldunek_na_pobyt_czasowy_w_Polsce",
-        "xlabel": "Rok",
-        "ylabel": "Liczba osób",
-        "years": [],
-        "values": [],
-        "chart": true
-    },
     "60632": {
+        "key": "P3",
+        "key_chart": "P3_chart",
         "name": "Aktywni zawodowo ogółem",
         "unit": "osoby",
         "category": "Rynek pracy",
@@ -48,11 +42,27 @@
         "chart": true
     },
     "6": {
+        "key": "L1",
+        "key_chart": "L1_chart",
         "name": "Ludność ogółem",
         "unit": "dane w tys.",
         "category": "Ludnosc",
         "description": "Ludność ogółem w Polsce",
         "save_as": "Ludnosc_ogolem_w_Polsce",
+        "xlabel": "Rok",
+        "ylabel": "Liczba osób",
+        "years": [],
+        "values": [],
+        "chart": true
+    },
+    "99719": {
+        "key": "L2",
+        "key_chart": "L2_chart",
+        "name": "Meldunek czasowy",
+        "unit": "osoby",
+        "category": "Ludnosc",
+        "description": "Meldunek na pobyt czasowy w Polsce",
+        "save_as": "Meldunek_na_pobyt_czasowy_w_Polsce",
         "xlabel": "Rok",
         "ylabel": "Liczba osób",
         "years": [],

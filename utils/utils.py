@@ -57,7 +57,12 @@ class HttpClient():
         self.delay = delay
 
         self.session = requests.Session()
-        
+
+        self.session.headers.update({
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept": "application/json",
+        })
+
         # self.session.mount(
         #     "https://api.cepik.gov.pl/",
         #     CepikTLSAdapter()
@@ -97,19 +102,21 @@ class HttpClient():
 
 @dataclass
 class Indicator:
+    key: str
     name: str
-    value: int | float
-    unit: str
+    value: int | float | str | None
+    unit: str | None
     source: str
-    last_update_date: str
+    last_update_date: str | None
     last_download_date: str
-    group_name: str
+    group_name: str | None
     category: str
-    chart_path: str
+    chart_path: str | None = None
    
 
-    def to_dict(self) -> dict[str, str | int | float]:
+    def to_dict(self) -> dict[str, str | int | float | None]:
         return {
+            "key": self.key,
             "name": self.name,
             "value": self.value,
             "unit": self.unit,
