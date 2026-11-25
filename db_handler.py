@@ -1,8 +1,12 @@
-"""Full database handler implementation."""
+"""SQLite database handler for storing and updating statistical indicators.
+
+This module provides the `DatabaseHandler` class and the `initialize_database`
+helper function for managing the database lifecycle, including table creation,
+CRUD operations, and upserting `Indicator` objects.
+"""
 
 import sqlite3
 from utils.utils import Indicator
-from dataclasses import asdict
 from typing import List, Dict, Any
 
 DESCRIPTION = """
@@ -22,7 +26,7 @@ DESCRIPTION:
 COLUMNS = {
     "key": "TEXT PRIMARY KEY",
     "name": "TEXT",
-    "value": "INTEGER",
+    "value": "NUMERIC",
     "unit": "TEXT",
     "source": "TEXT",
     "last_update_date": "TEXT",
@@ -35,26 +39,25 @@ COLUMNS = {
 class DatabaseHandler:
     """Class to handle database operations."""
     def __init__(self, db_path: str = "data.db"):
-        """Inicjalizacja połączenia z bazą danych."""
+        """Initialize the database connection."""
         self.conn = sqlite3.connect(db_path)
-        self.conn.row_factory = sqlite3.Row  # pozwala zwracać dane jako słowniki
+        self.conn.row_factory = sqlite3.Row  # Return rows as dictionary-like objects
         self.cursor = self.conn.cursor()
 
     def create_table(self, table_name: str, columns: Dict[str, str]):
-        """
-        Tworzy tabelę, jeśli nie istnieje.
-        columns: np. {"name": "TEXT", "value": "INTEGER", "unit": "TEXT"}
-        """
+        """Create a table if it does not already exist.
+
+        Args:
+            table_name: Name of the database table.
+            columns: Mapping of column names to SQLite data types.
+        """     
         cols = ", ".join([f"{col} {dtype}" for col, dtype in columns.items()])
-        # Dodaj UNIQUE(name), wartości w kolumnie name muszą być unikalne
-        query = f"CREATE TABLE IF NOT EXISTS {table_name} ({cols}, UNIQUE(name))"
+        query = f"CREATE TABLE IF NOT EXISTS {table_name} ({cols})"
         self.cursor.execute(query)
         self.conn.commit()
 
     def save_data(self, table_name: str, data: List[Dict[str, Any]]):
-        """
-        Zapisuje listę słowników do tabeli.
-        """
+        """Insert a list of dictionaries into the specified table."""
         if not data:
             return
         columns = ", ".join(data[0].keys())
@@ -65,69 +68,57 @@ class DatabaseHandler:
         self.conn.commit()
 
     def read_data(self, table_name: str) -> List[Dict[str, Any]]:
-        """
-        Odczytuje wszystkie dane z tabeli i zwraca jako listę słowników.
-        """
+        """Read all records from the table and return them as a list of dicts."""
         query = f"SELECT * FROM {table_name}"
         self.cursor.execute(query)
         rows = self.cursor.fetchall()
         return [dict(row) for row in rows]
 
     def update_data(self, table_name: str, set_values: Dict[str, Any], condition: str):
-        """
-        Aktualizuje dane w tabeli.
-        set_values: np. {"value": 12345}
-        condition: np. "name='total_vehicles_ytd'"
-        """
+        """Update records matching the given SQL condition."""
         set_clause = ", ".join([f"{col} = ?" for col in set_values.keys()])
         query = f"UPDATE {table_name} SET {set_clause} WHERE {condition}"
         self.cursor.execute(query, tuple(set_values.values()))
         self.conn.commit()
 
     def delete_data(self, table_name: str, condition: str):
-        """
-        Usuwa dane z tabeli na podstawie warunku.
-        """
+        """Delete records matching the given SQL condition."""
         query = f"DELETE FROM {table_name} WHERE {condition}"
         self.cursor.execute(query)
         self.conn.commit()
 
     def save_or_update(self, table_name: str, data: Indicator):
-        """Insert a new record or update an existing one."""
+        """Insert a new Indicator record or update an existing one on key conflict."""
+        record = data.to_dict()
 
-        data = asdict(data)
-
-        columns = list(data.keys())
+        columns = list(record.keys())
         placeholders = ", ".join(["?"] * len(columns))
         columns_sql = ", ".join(columns)
 
         update_clause = ", ".join(
             f"{col}=excluded.{col}"
             for col in columns
-            if col != "name"
+            if col != "key"
         )
 
         query = f"""
             INSERT INTO {table_name} ({columns_sql})
             VALUES ({placeholders})
-            ON CONFLICT(name) DO UPDATE SET
+            ON CONFLICT(key) DO UPDATE SET
             {update_clause}
         """
 
-        self.cursor.execute(query, tuple(data[col] for col in columns))
-        row = self.cursor.execute(
-            f"SELECT key FROM {table_name} WHERE name = ?", (data["name"],)
-        ).fetchone()
-        print("Zapisano rekord, key:", row["key"])
+        self.cursor.execute(query, tuple(record[col] for col in columns))
         self.conn.commit()
+        print("Zapisano rekord, key:", record["key"])
+
 
     def close(self):
         """Zamyka połączenie z bazą danych."""
         self.conn.close()
 
 def initialize_database(db_path, table_name):
-    """Tworzy tabelę, jeśli jeszcze nie istnieje."""
-
+    """Create the target database table if it does not exist yet."""
     db = DatabaseHandler(db_path)
 
     try:
@@ -141,11 +132,11 @@ def initialize_database(db_path, table_name):
         result = db.cursor.fetchone()
 
         if result is None:
-            print(f"Tabela '{table_name}' nie istnieje. Tworzę...")
+            print(f"Table '{table_name}' does not exist. Creating...")
             db.create_table(table_name, COLUMNS)
-            print("Tabela została utworzona.")
+            print("Table created successfully.")
         else:
-            print(f"Tabela '{table_name}' już istnieje.")
+            print(f"Table '{table_name}' already exists.")
 
     finally:
         db.close()
